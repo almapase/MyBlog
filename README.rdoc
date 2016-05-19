@@ -96,3 +96,5 @@ en /my-blog/app/models/comment.rb
 ```RUBY
 belongs_to :user
 ```
+git add .
+git commit -m "add user to comment and  post"
