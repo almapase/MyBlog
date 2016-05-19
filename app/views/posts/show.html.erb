@@ -15,11 +15,5 @@
   <%= link_to 'Back', posts_path %>
 </div>
 <br>
-<div class="new-comment">
-  <%= form_for [@post, @comment] do |f| %>
-    <%= f.label :comment %>
-    <%= f.text_area :comment %>
-
-    <%= f.submit "Enviar" %>
-  <% end %>
-</div>
+<%= render "comments/form" %>
+<%= render partial: "comments/comment", collection: @last_comments %>
