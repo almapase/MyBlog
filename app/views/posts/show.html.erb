@@ -1,14 +1,25 @@
-<p id="notice"><%= notice %></p>
+<div class="post">
+  <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @post.title %>
-</p>
+  <p>
+    <strong>Title:</strong>
+    <%= @post.title %>
+  </p>
 
-<p>
-  <strong>Content:</strong>
-  <%= @post.content %>
-</p>
+  <p>
+    <strong>Content:</strong>
+    <%= @post.content %>
+  </p>
 
-<%= link_to 'Edit', edit_post_path(@post) %> |
-<%= link_to 'Back', posts_path %>
+  <%= link_to 'Edit', edit_post_path(@post) %> |
+  <%= link_to 'Back', posts_path %>
+</div>
+<br>
+<div class="new-comment">
+  <%= form_for [@post, @comment] do |f| %>
+    <%= f.label :comment %>
+    <%= f.text_area :comment %>
+
+    <%= f.submit "Enviar" %>
+  <% end %>
+</div>
