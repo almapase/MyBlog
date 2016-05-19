@@ -72,3 +72,27 @@ Para saludar al usuario agregamos en: /my-blog/app/views/layouts/_navbar.html.er
 ```HTML
 <span>Hola  <%= current_user.name %></span>
 ```
+git add .
+git commit -m "Create name for the model user"
+### Relacionando los post y comentarios con los usuarios
+creamos migración con referencia:
+```
+rails g migration addUserIdToPost user:references
+rails g migration addUserIdToComment user:references
+rake db:migrate
+```
+Al borrar los usuarios los post y comment se borrarán en cascada
+en /my-blog/app/models/user.rb
+```RUBY
+has_many :posts, :dependent => :destroy
+has_many :comments, :dependent => :destroy
+```
+referencias en Post y comments
+en /my-blog/app/models/post.rb:
+```RUBY
+belongs_to :user
+```
+en /my-blog/app/models/comment.rb
+```RUBY
+belongs_to :user
+```
