@@ -1,5 +1,9 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
+  # Se solicita autenticacion para todo excepto Index, nuevo y crear
+  before_action :authenticate_user!, except: [:index, :new, :create]
+  # Debe ser moderador solo para new y create
+  before_action :check_moderator!, only: [:new, :create]
 
   # GET /posts
   # GET /posts.json
@@ -72,5 +76,13 @@ class PostsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def post_params
       params.require(:post).permit(:title, :content)
+    end
+
+    # helper para verificar si el user pertenece a rol moderator
+    def check_moderator!
+      authenticate_user!
+      unless current_user.moderator?
+        redirect_to root_path, alert: "No tienes acceso"
+      end
     end
 end

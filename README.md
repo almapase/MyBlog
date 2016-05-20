@@ -90,9 +90,9 @@ def configure_permitted_parameters
   devise_parameter_sanitizer.for(:account_update) << :name
 end
 ```
-Para saludar al usuario agregamos en my-blog/app/views/layouts/_navbar.html.erb:
+Para saludar al usuario agregamos en my-blog/app/views/layouts/_ navbar.html.erb:
 
-```RUBY
+```HTML
 <span>Hola  <%= current_user.name %></span>
 ```
 
@@ -127,4 +127,131 @@ belongs_to :user
 git add .
 git commit -m "add user to comment and  post"
 ```
-###Agregando Moderadores
+##Agregando Moderadores
+vamos a implementar un mini sistema de permisos con Devise, dos tipos de usuarios:
+
+>Normal: crea post y comentarios y puede editar o eliminar solo los suyos.
+>Editor: crea post y comentarios y puede editar o eliminar todo.
+
+###21) blog - Autorización y Roles con Devise
+crear nueva rama:
+```
+git checkout -b moderadores
+```
+agregamos el rol de moderador al usuario como integer para ocupar ENUM
+```
+rails g migration addRoleToUser role:integer
+rake db:migrate
+```
+en /Users/almapase/dlatm-my-blog/my-blog/app/models/user.rb
+```RUBY
+enum role: [:guest, :moderator]
+```
+###22) blog - Valores iniciales para el tipo de usuario
+en /Users/almapase/dlatm-my-blog/my-blog/app/models/user.rb
+```RUBY
+before_save :default_values
+
+def default_values
+  self.role ||= 0
+end
+```
+###23) blog - Nuestro propio mini sistema de autorización
+evitando que un usuario comente o edite sin estar logeado
+en: /Users/almapase/dlatm-my-blog/my-blog/app/controllers/posts_controller.rb
+
+```RUBY
+# Se solicita autenticacion para todo excepto Index, nuevo y crear
+before_action :authenticate_user!, except: [:index, :new, :create]
+# Debe ser moderador solo para new y create
+before_action :check_moderator!, only: [:new, :create]
+....
+.
+.
+.
+....
+private
+# helper para verificar si el user pertenece a rol moderator
+def check_moderator!
+  authenticate_user!
+  unless current_user.moderator?
+    redirect_to root_path, alert: "No tienes acceso"
+  end
+end
+```
+###24) blog - Introducción a CanCanCan
+CanCanCan se preocupa de que el usuario esté logeado y verifica desde el árbol de habilidades si tiene los permisos para manejar el archivo.
+
+
+###25) blog - Arbol de Habilidades
+###26) blog - Testing de Habilidades
+###27) blog - El Helper Can
+###28) blog - Lockdown con CanCanCan
+###29) blog - Variables de Entorno y protección de claves
+###30) blog - Recuperando password con Devise
+##
+31) blog - Subiendo archivos con Carrierwave
+32) blog - Guardando al post y al usuario con el comentario
+33) blog - Caché en Carrierwave
+34) blog - Descargando archivos a través de la URL
+35) blog - MiniMagick
+36) blog - Fallback al cargar la imágen
+37) blog - Relaciones N a N
+38) blog - Post Votes y Users
+39) blog - Probando las relaciones n a n
+40) blog - Creando votos en la consola
+##
+41) blog - Member vs Collection Vs Resource
+42) blog - La acción de votar
+43) blog - Guardando los votos
+44) blog - Evitando votos repetidos
+45) blog - Conteo de votos
+46) blog - Cancelando un voto
+47) blog - Introducción a polimorfismo
+48) blog - Migración e introducción a la interfaz polimórfica
+49) blog - Relación Polimórfica entre el usuario y los comentarios
+50) blog - Interfaz Votable
+##
+51) blog - Modificación de la validación de votos
+52) blog - Votando Comentarios
+53) blog - Mas uno o Menos uno
+54) blog - Introducción a los helpers
+55) blog - Previniendo conflictos de nombre en los helpers
+56) blog - Método Pluralize
+57) blog - Intro a Query Strings
+58) blog - Buscado Básico
+59) blog - Form Tag
+60) blog - Búsqueda Parcial
+##
+61) blog - Búsqueda insensible y multicriterio
+62) blog - El archivo Seed
+63) blog - Paginación con Kaminari
+64) blog - Ajax y negociación de contenido
+65) blog - Respond_to y Cors
+66) blog - Creando un post por ajax
+67) blog - Render de comentario por Ajax
+68) blog - Cuenta de votos
+69) blog - Mejor cuenta de votos
+70) blog - Introducción a Ajax con Jquery
+##
+71) blog - El método .ajax
+72) blog - Búsqueda utilizando .ajax
+73) blog - Ajaxeando la páginación
+74) blog - Búsqueda a partir de n caracteres
+75) blog - Introducción a Infinite Scrolling
+76) blog - Alto del viewport y del documento
+77) blog - Armando el Infinite Scrolling
+78) blog - Evitando multiples llamados con Debounce
+79) blog - Optimización y Eager Loading
+80) blog - Counter cache
+##
+81) blog - buscando problemas de n+1 con Bullet
+82) blog - Friendly Id
+83) blog - Introducción a Amazon S3
+84) blog - La gema FOG
+85) blog - Configurando fog
+86) blog - Estrategias de Hosting
+87) blog - Deploy a heroku
+88) blog - Heroku rename
+89) blog - Comprando el .com
+90) blog - Configurando el .com
