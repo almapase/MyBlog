@@ -1,6 +1,7 @@
 class CommentsController < ApplicationController
-  before_action :authenticate_user!, except: [:index]
-  
+  # esta linea permite a CanCanCan verificar los privilegios de un usuario sobre los recirsos de este controller
+  load_and_authorize_resource
+
   def create
     @post = Post.find(params[:post_id])
     @comment = @post.comments.build(comments_params)

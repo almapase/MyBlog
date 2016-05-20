@@ -182,11 +182,76 @@ end
 ###24) blog - Introducción a CanCanCan
 CanCanCan se preocupa de que el usuario esté logeado y verifica desde el árbol de habilidades si tiene los permisos para manejar el archivo.
 
-
+en Gemfile:
+```RUBY
+gem 'cancancan'
+```
 ###25) blog - Arbol de Habilidades
+construir arbol de habilidades
+se genera el modelo ability.rb
+```
+rails g cancan:ability
+```
+en /Users/almapase/dlatm-my-blog/my-blog/app/models/ability.rb
+```RUBY
+user ||= User.new # para menejar el árbol de habilidades en caso de un usuario no logeado
+if user.moderator?
+  can :manage, :all
+elsif user.guest?
+  can :read, :all
+  can :create, Post
+  can [:edit, :destroy], [Post, Comment], user_id: user.id
+else
+  can :read, :all
+end
+```
 ###26) blog - Testing de Habilidades
+en al consola de Rails
+```
+user = User.first
+ability = Ability.new(user)
+ability.can?(:edit, Post.new(user:user)) #editar un post de él
+ability.can?(:create, Post)
+ability.can?(:destroy, Post) #destruir cualquier post
+ability.can?(:destroy, Post.new(user: user)) #Destruir su post
+```
 ###27) blog - El Helper Can
+Revisar los links a editar y borrar
+en my-blog/app/views/posts/index.html.erb
+```HTML
+<td><%= link_to 'Edit', edit_post_path(post) if can? :edit, post %></td>
+<td><%= link_to 'Destroy', post, method: :delete, data: { confirm: 'Are you sure?' } if can? :destroy, post %></td>
+```
 ###28) blog - Lockdown con CanCanCan
+Bloqueando los recursos en los controllers de Post y Comment
+en:
+>my-blog/app/controllers/comments_controller.rb
+>my-blog/app/controllers/posts_controller.rb
+
+```RUBY
+# esta linea permite a CanCanCan verificar los privilegios de un usuario sobre los recirsos de este controller
+load_and_authorize_resource
+```
+manejando las conexiones no autorizadas
+en /my-blog/app/controllers/application_controller.rb
+```RUBY
+rescue_from CanCan::AccessDenied do |exception|
+  redirect_to root_url, :alert => exception.message
+end
+```
+optimización del posts_controller
+en /my-blog/app/controllers/posts_controller.rb
+eliminaremos las siguientes lineas, por que CanCanCan hace ya esa pega.
+```RUBY
+  before_action :set_post, only: [:show, :edit, :update, :destroy]
+  .
+  .
+  .
+
+  def set_post
+    @post = Post.find(params[:id])
+  end
+```
 ###29) blog - Variables de Entorno y protección de claves
 ###30) blog - Recuperando password con Devise
 ##
