@@ -253,7 +253,17 @@ eliminaremos las siguientes lineas, por que CanCanCan hace ya esa pega.
   end
 ```
 ###29) blog - Variables de Entorno y protección de claves
+Usaremos la Gema dontenv, agregaremos la gema en la parte superior del Gemfile:
+```ruby
+gem 'dotenv-rails', :groups => [:development, :test]
+```
+Ahora ejecutamos:
+```
+$ bundle
+```
 ###30) blog - Recuperando password con Devise
+
+
 ##
 31) blog - Subiendo archivos con Carrierwave
 32) blog - Guardando al post y al usuario con el comentario
